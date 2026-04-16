@@ -1,5 +1,5 @@
 
-# OctoPrint Passkeys
+# 🐙 OctoPrint Passkeys 🔑
 
 Passkey-first sign-in plugin for OctoPrint.
 
