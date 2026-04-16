@@ -1,0 +1,18 @@
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OctoPrint-Passkeys"
+version = "0.2.8"
+description = "Passkey-first login plugin for OctoPrint"
+requires-python = ">=3.9,<4"
+dependencies = [
+  "webauthn>=2.7.1",
+]
+authors = [
+  { name = "Robert Cole" }
+]
+dynamic = ["license", "entry-points"]
+

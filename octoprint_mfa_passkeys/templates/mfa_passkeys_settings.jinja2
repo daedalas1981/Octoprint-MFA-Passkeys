@@ -1,0 +1,130 @@
+<div id="passkeys-settings">
+  <h3>Passkeys for OctoPrint</h3>
+  <p class="passkeys-settings-help">
+    <strong>Developer: Robert Cole</strong><br>
+    This page helps you set up certificate trust, export a public certificate for Windows or Linux, and enable passwordless sign-in from the OctoPrint login page.
+  </p>
+
+  <div class="passkeys-grid">
+    <label>Login button label</label>
+    <input type="text" class="passkeys-setting-button-label" placeholder="Sign in with a Passkey">
+
+    <label>RP ID override</label>
+    <input type="text" class="passkeys-setting-rpid" placeholder="octopi.local">
+
+    <label>Origin override</label>
+    <input type="text" class="passkeys-setting-origin" placeholder="https://octopi.local">
+
+    <label>Certificate source path</label>
+    <input type="text" class="passkeys-setting-cert-path" placeholder="/etc/ssl/private/octopi.pem or /etc/ssl/snakeoil.pem">
+
+    <label>Resident key preference</label>
+    <select class="passkeys-setting-resident">
+      <option value="preferred">preferred</option>
+      <option value="required">required</option>
+      <option value="discouraged">discouraged</option>
+    </select>
+
+    <label>Force HTTPS for passkeys</label>
+    <input type="checkbox" class="passkeys-setting-force-https" checked>
+  </div>
+
+  <p class="passkeys-settings-help">
+    Effective origin: <strong class="passkeys-settings-origin"></strong><br>
+    Effective RP ID: <strong class="passkeys-settings-rpid"></strong><br>
+    Download status: <span class="passkeys-settings-download-note"></span>
+  </p>
+
+  <p class="passkeys-settings-help">
+    <a href="/plugin/mfa_passkeys/download_cert" class="passkeys-settings-download-link" style="display:none">Download exported .cer</a>
+  </p>
+
+  <p>
+    <button type="button" class="btn btn-primary passkeys-settings-save">Save plugin settings</button>
+    <button type="button" class="btn passkeys-settings-import-cert">Import public certificate from source path</button>
+  </p>
+
+  <div class="passkeys-settings-message"></div>
+
+  <hr>
+
+  <p class="passkeys-settings-help">Standalone passkey sign-in page: <a class="passkeys-settings-standalone-login-link" href="/plugin/mfa_passkeys/login">/plugin/mfa_passkeys/login</a></p>
+
+<h4>Recommended setup order</h4>
+  <ol>
+    <li>Enable SSH or local prompt access on the Pi.</li>
+    <li>Find the PEM file actually used for HTTPS, often <code>/etc/ssl/private/octopi.pem</code> or <code>/etc/ssl/snakeoil.pem</code>.</li>
+    <li>Paste either the PEM path or, preferably, the helper-exported readable <code>.crt</code>/<code>.cer</code> path into <strong>Certificate source path</strong>.</li>
+    <li>Click <strong>Import public certificate from source path</strong>.</li>
+    <li>Download the exported <strong>.cer</strong> and install it into Windows trust if Chrome or Edge reports TLS or certificate errors.</li>
+    <li>Fully restart the browser after installing the certificate.</li>
+    <li>Enroll one passkey in User Settings, then open the plugin's standalone sign-in page at <code>/plugin/mfa_passkeys/login</code> and use <strong>Sign in with a Passkey</strong>.</li>
+  </ol>
+
+  <h4>Where to find the helper script</h4>
+  <p class="passkeys-settings-help">
+    The helper script is inside the plugin zip at:<br>
+    <code>octoprint-passkeys-plugin/extras/setup_cert_helper.sh</code>
+  </p>
+
+  <h4>Fresh install: run the helper script over SSH</h4>
+  <ol>
+    <li>Download and extract the plugin zip on your PC.</li>
+    <li>Copy <code>setup_cert_helper.sh</code> to your Pi with SCP or SFTP.</li>
+    <li>SSH into the Pi.</li>
+    <li>Make it executable with <code>chmod +x ~/setup_cert_helper.sh</code>.</li>
+    <li>Run it with <code>sudo ~/setup_cert_helper.sh</code>. The updated helper can now guide you interactively if you do not pass a PEM path.</li>
+  </ol>
+
+  <h4>SSH / console access checklist</h4>
+  <p class="passkeys-settings-help">
+    If you do not already have SSH access, use one of these:
+  </p>
+  <ul>
+    <li>Enable SSH during Raspberry Pi imaging.</li>
+    <li>Or connect a keyboard and monitor and enable SSH from <code>sudo raspi-config</code>.</li>
+    <li>Or use direct prompt access on the Pi if SSH is not available yet.</li>
+  </ul>
+
+  <h4>Common certificate commands</h4>
+  <p class="passkeys-settings-help">
+    Inspect a PEM certificate:
+  </p>
+  <pre>sudo openssl x509 -in /etc/ssl/private/octopi.pem -text -noout | grep -E "Subject:|DNS:|IP Address:"</pre>
+  <p class="passkeys-settings-help">
+    If you created separate key and cert files and need to combine them into one PEM:
+  </p>
+  <pre>sudo cat /etc/ssl/private/octopi.key /etc/ssl/private/octopi.crt | sudo tee /etc/ssl/private/octopi.pem &gt; /dev/null</pre>
+
+  <h4>Troubleshooting TLS and certificate trust</h4>
+  <ul>
+    <li>If the browser says <code>WebAuthn is not supported on sites with TLS certificate errors</code>, the certificate is still not trusted or its hostname does not match the URL.</li>
+    <li>The certificate must match the hostname you actually use, for example <code>octopi.local</code>.</li>
+    <li>If you changed the certificate, fully restart Chrome or Edge. A tab refresh is often not enough.</li>
+    <li>If your browser still shows a hostname like <code>octopi</code> instead of <code>octopi.local</code>, import the corrected certificate again.</li>
+    <li>If HAProxy or another proxy owns TLS, make sure it is serving the updated PEM, not an older file.</li>
+  </ul>
+
+  <h4>Windows certificate install</h4>
+  <ol>
+    <li>Download the exported <code>.cer</code>.</li>
+    <li>Press <strong>Win + R</strong>, type <code>mmc</code>, and press Enter.</li>
+    <li>In MMC, go to <strong>File → Add/Remove Snap-in</strong>.</li>
+    <li>Add <strong>Certificates</strong> for <strong>Computer account</strong>, then choose <strong>Local computer</strong>.</li>
+    <li>Open <strong>Trusted Root Certification Authorities → Certificates</strong>.</li>
+    <li>Right-click, choose <strong>All Tasks → Import</strong>, and import the <code>.cer</code>.</li>
+    <li>Close all browser windows and reopen Chrome or Edge.</li>
+  </ol>
+
+  <p class="passkeys-settings-help">
+    Quick alternative on Windows: press <strong>Win + R</strong>, run <code>certmgr.msc</code> for the current user store, or use <code>mmc</code> when you specifically need the <strong>Local Computer</strong> store.
+  </p>
+
+  <h4>Linux certificate install</h4>
+  <ol>
+    <li>Download the exported PEM/CRT file.</li>
+    <li>Copy it to <code>/usr/local/share/ca-certificates/</code>.</li>
+    <li>Run <code>sudo update-ca-certificates</code>.</li>
+    <li>Restart the browser before testing passkeys again.</li>
+  </ol>
+</div>

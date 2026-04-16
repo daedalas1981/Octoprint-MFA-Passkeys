@@ -1,0 +1,69 @@
+
+.passkeys-login-panel,
+#passkeys-usersettings,
+#passkeys-settings {
+  margin-top: 1rem;
+}
+
+.passkeys-login-button {
+  margin-right: 0.5rem;
+}
+
+.passkeys-login-help,
+.passkeys-usersettings-help,
+.passkeys-settings-help {
+  margin-top: 0.5rem;
+  color: #666;
+}
+
+.passkeys-login-message,
+.passkeys-usersettings-message,
+.passkeys-settings-message,
+.passkeys-usersettings-warning {
+  margin-top: 0.5rem;
+  white-space: pre-wrap;
+}
+
+.passkeys-usersettings-warning {
+  color: #8a6d3b;
+}
+
+.passkeys-credential-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.passkeys-credential-item {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.passkeys-credential-line {
+  margin-bottom: 0.25rem;
+}
+
+.passkeys-credential-meta {
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.passkeys-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.passkeys-grid input,
+.passkeys-grid select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+#passkeys-standalone-login .passkeys-login-message {
+  margin-top: 12px;
+  min-height: 1.2em;
+}

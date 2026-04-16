@@ -1,0 +1,24 @@
+<div id="passkeys-generic-bootstrap" style="display:none"></div>
+<script>
+(function() {
+  function tryInject() {
+    try {
+      if (window.ensurePasskeyLoginButton) {
+        window.ensurePasskeyLoginButton();
+      } else if (window.OctoPrintMfaPasskeys && typeof window.OctoPrintMfaPasskeys.ensurePasskeyLoginButton === "function") {
+        window.OctoPrintMfaPasskeys.ensurePasskeyLoginButton();
+      }
+    } catch (e) {
+      console.debug("Passkeys generic bootstrap skipped:", e);
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", tryInject);
+  } else {
+    tryInject();
+  }
+  setTimeout(tryInject, 250);
+  setTimeout(tryInject, 1000);
+  setTimeout(tryInject, 2500);
+})();
+</script>

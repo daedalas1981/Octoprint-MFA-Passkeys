@@ -1,0 +1,2 @@
+Copyright (c) 2026 R Cole
+AGPLv3 or later.

@@ -1,0 +1,29 @@
+<div id="passkeys-usersettings">
+  <h3>Passkeys</h3>
+  <p class="passkeys-usersettings-help">
+    Enroll a passkey for passwordless sign-in from the main OctoPrint login page. After one passkey is enrolled successfully, that enrolled passkey is your confirmation.
+  </p>
+
+  <p class="passkeys-usersettings-help">
+    Effective origin: <strong class="passkeys-usersettings-origin"></strong><br>
+    Effective RP ID: <strong class="passkeys-usersettings-rpid"></strong><br>
+    Developer: <strong class="passkeys-usersettings-credit"></strong>
+  </p>
+
+  <div class="passkeys-usersettings-warning"></div>
+
+  <div class="passkeys-grid">
+    <label>Friendly name</label>
+    <input type="text" class="passkeys-friendly-name" placeholder="Win11, iPhone, YubiKey">
+  </div>
+
+  <p>
+    <button type="button" class="btn btn-primary passkeys-enroll-button">Enroll passkey</button>
+  </p>
+
+  <div class="passkeys-usersettings-message"></div>
+
+  <h4>Saved passkeys</h4>
+  <p class="passkeys-credential-empty">No passkeys enrolled yet.</p>
+  <ul class="passkeys-credential-list"></ul>
+</div>
