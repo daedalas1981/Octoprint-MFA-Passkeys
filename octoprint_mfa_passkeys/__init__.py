@@ -874,7 +874,7 @@ class PasskeysPlugin(
                 "displayName": self._plugin_name,
                 "displayVersion": self._plugin_version,
                 "type": "github_release",
-                "user": "rcole",
+                "user": "daedalas1981",
                 "repo": "OctoPrint-Passkeys",
                 "current": self._plugin_version,
                 "stable_branch": {
@@ -882,7 +882,7 @@ class PasskeysPlugin(
                     "branch": "main",
                     "commitish": ["main"],
                 },
-                "pip": "https://github.com/rcole/OctoPrint-Passkeys/archive/{target_version}.zip",
+                "pip": "https://github.com/daedalas1981/OctoPrint-Passkeys/archive/{target_version}.zip",
             }
         }
 

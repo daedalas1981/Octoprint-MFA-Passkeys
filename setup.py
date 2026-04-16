@@ -8,7 +8,7 @@ plugin_version = "0.2.8"
 plugin_description = "Passkey-first login plugin for OctoPrint"
 plugin_author = "Robert Cole"
 plugin_author_email = "noreply@example.com"
-plugin_url = "https://github.com/rcole/OctoPrint-Passkeys"
+plugin_url = "https://github.com/daedalas1981/OctoPrint-Passkeys"
 plugin_license = "AGPLv3"
 
 plugin_requires = [
