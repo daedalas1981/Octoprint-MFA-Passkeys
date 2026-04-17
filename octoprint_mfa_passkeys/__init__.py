@@ -444,12 +444,13 @@ class PasskeysPlugin(
             f.write(der_cert)
 
     def _require_authenticated_user(self):
-        if not current_user or not current_user.is_authenticated or not current_user.is_active:
+        if not current_user or current_user.is_anonymous() or not getattr(current_user, "is_active", False):
             abort(403)
 
     def _require_admin(self):
         self._require_authenticated_user()
-        if not getattr(current_user, "is_admin", False):
+        from octoprint.access.permissions import Permissions
+        if not current_user.has_permission(Permissions.ADMIN):
             abort(403)
 
     def _credential_transports_from_registration(self, credential: Dict[str, Any]):
@@ -532,13 +533,7 @@ class PasskeysPlugin(
         session["credentials_seen"] = datetime.datetime.now().timestamp()
         eventManager().fire(Events.USER_LOGGED_IN, payload={"username": user.get_id()})
         auth_log(f"Logging in user {userid} from {remote_addr} via passkey")
-        as_dict = {}
-        if hasattr(user, "as_dict"):
-            as_dict = user.as_dict()
-        elif hasattr(user, "asDict"):
-            as_dict = user.asDict()
-        elif hasattr(user, "__dict__"):
-            as_dict = {"name": user.get_id()}
+        as_dict = user.as_dict()
         as_dict["_login_mechanism"] = session["login_mechanism"]
         as_dict["_credentials_seen"] = to_api_credentials_seen(session["credentials_seen"])
         as_dict["_is_external_client"] = self._is_external_client(remote_addr)
@@ -611,7 +606,17 @@ class PasskeysPlugin(
 
         candidate_paths = []
         if requested_path:
-            candidate_paths.append(requested_path)
+            normalized_path = os.path.abspath(requested_path)
+            allowed_roots = [
+                os.path.abspath("/etc/ssl/"),
+                os.path.abspath("/etc/haproxy/"),
+                os.path.abspath("/etc/nginx/"),
+                os.path.abspath(self.get_plugin_data_folder())
+            ]
+            is_allowed = any(normalized_path.startswith(root) for root in allowed_roots)
+            if not is_allowed:
+                return make_response(jsonify({"error": "Configured certificate path is not in an allowed directory for security reasons."}), 400)
+            candidate_paths.append(normalized_path)
 
         candidate_paths.extend(self._detect_certificate_candidates())
 

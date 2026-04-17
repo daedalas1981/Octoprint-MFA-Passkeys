@@ -100,6 +100,11 @@ This plugin intentionally avoids storing private keys or serving the raw source 
 - GitHub release settings in the software update hook currently point at placeholder repo names and should be changed before public release.
 
 
+## v0.2.11 notes
+- Security fixes following OctoPrint core repository review (XSS and Path Traversal patches).
+- Modernized packaging architecture (`pyproject.toml`).
+- Deprecated API removal cleanup for OctoPrint v2.0 forwards compatibility.
+
 ## v0.2.10 notes
 
 - Removed old standalone login references to fully embrace the unified injection point.

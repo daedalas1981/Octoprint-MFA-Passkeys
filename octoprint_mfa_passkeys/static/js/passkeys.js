@@ -36,6 +36,19 @@
     if (el) el.innerHTML = value || "";
   }
 
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str).replace(/[&<>"']/g, function(m) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[m];
+    });
+  }
+
   async function jsonRequest(path, options) {
     const response = await fetch(api(path), Object.assign({
       method: "GET",
@@ -161,7 +174,7 @@
           if (cred.transports && cred.transports.length) meta.push("Transports: " + cred.transports.join(", "));
           if (cred.last_used) meta.push("Last used: " + friendlyDate(cred.last_used));
           li.innerHTML =
-            "<div class='passkeys-credential-line'><strong>" + (cred.friendly_name || "Unnamed passkey") + "</strong></div>" +
+            "<div class='passkeys-credential-line'><strong>" + escapeHtml(cred.friendly_name || "Unnamed passkey") + "</strong></div>" +
             "<div class='passkeys-credential-meta'>" + meta.join(" · ") + "</div>";
           const btn = document.createElement("button");
           btn.className = "btn btn-mini";
