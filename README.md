@@ -95,10 +95,6 @@ After that, the main login page button should work.
 
 This plugin intentionally avoids storing private keys or serving the raw source PEM. It only stores a public certificate copy for download.
 
-## Current repo placeholder
-
-- GitHub release settings in the software update hook currently point at placeholder repo names and should be changed before public release.
-
 
 ## v0.2.11 notes
 - Security fixes following OctoPrint core repository review (XSS and Path Traversal patches).

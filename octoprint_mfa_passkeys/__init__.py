@@ -874,20 +874,20 @@ class PasskeysPlugin(
                 "displayVersion": self._plugin_version,
                 "type": "github_release",
                 "user": "daedalas1981",
-                "repo": "OctoPrint-Passkeys",
+                "repo": "Octoprint-MFA-Passkeys",
                 "current": self._plugin_version,
                 "stable_branch": {
                     "name": "Stable",
                     "branch": "main",
                     "commitish": ["main"],
                 },
-                "pip": "https://github.com/daedalas1981/OctoPrint-Passkeys/archive/{target_version}.zip",
+                "pip": "https://github.com/daedalas1981/Octoprint-MFA-Passkeys/archive/{target_version}.zip",
             }
         }
 
 
 __plugin_name__ = gettext("Passkeys for OctoPrint")
-__plugin_version__ = "0.2.8"
+__plugin_version__ = "0.2.11"
 __plugin_pythoncompat__ = ">=3.9,<4"
 __plugin_implementation__ = PasskeysPlugin()
 __plugin_hooks__ = {

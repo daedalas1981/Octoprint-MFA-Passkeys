@@ -14,7 +14,7 @@ dependencies = [
 authors = [
   { name = "Daedalas1981", email = "robert@jar-wedding.com" }
 ]
-urls = { Homepage = "https://github.com/daedalas1981/OctoPrint-Passkeys" }
+urls = { Homepage = "https://github.com/daedalas1981/Octoprint-MFA-Passkeys" }
 dynamic = ["license"]
 
 [project.entry-points."octoprint.plugin"]
