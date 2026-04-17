@@ -3,11 +3,11 @@
 
 Passkey-first sign-in plugin for OctoPrint.
 
-Developer: Robert Cole
+Developer: Daedalas1981
 
 ## What this version changes
 
-This build moves away from OctoPrint's MFA-only flow and adds a true **Sign in with a Passkey** button to the main login page. It keeps enrollment and management in **User Settings** and adds a clean **Settings → Passkeys** page for diagnostics, certificate import, and export.
+This build moves away from OctoPrint's MFA-only flow and adds a true **Sign in with a Passkey** button to the main login page. It automates certificate extraction and moves setup validation scripts to an easily accessible data directory.
 
 ## Features
 
@@ -100,10 +100,10 @@ This plugin intentionally avoids storing private keys or serving the raw source 
 - GitHub release settings in the software update hook currently point at placeholder repo names and should be changed before public release.
 
 
-## v0.2.4 notes
+## v0.2.10 notes
 
-- Added more reliable login-page injection targeting OctoPrint's `#login-user` and `#login-password` fields.
-- Changed the public-facing developer text to `Developer: Robert Cole`.
-- Removed developer credit as an editable plugin setting.
-- Expanded in-app certificate setup instructions, including SSH, PEM inspection, MMC, and certmgr guidance.
-- Updated the helper script to guide the user interactively when no PEM path is supplied and to export into the invoking user's home directory by default.
+- Removed old standalone login references to fully embrace the unified injection point.
+- Changed the public-facing developer text to `Developer: Daedalas1981`.
+- Automates certificate extraction on startup using local TCP loopback.
+- Auto-extracts the helper shell script to `~/.octoprint/data/mfa_passkeys/setup_cert_helper.sh`.
+- Rewrote `setup_cert_helper.sh` to allow installation of snakeoil certificates for users who don't have SSL set up yet.

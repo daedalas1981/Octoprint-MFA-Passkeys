@@ -64,6 +64,32 @@ class PasskeysPlugin(
     def initialize(self):
         self._load_data()
 
+        try:
+            import stat
+            import shutil
+            data_folder = self.get_plugin_data_folder()
+            script_src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "setup_cert_helper.sh")
+            script_dst = os.path.join(data_folder, "setup_cert_helper.sh")
+            if os.path.exists(script_src):
+                shutil.copy2(script_src, script_dst)
+                st = os.stat(script_dst)
+                os.chmod(script_dst, st.st_mode | stat.S_IEXEC)
+        except Exception as e:
+            self._logger.warning(f"Could not deploy setup_cert_helper.sh: {e}")
+
+        try:
+            import ssl
+            pem_text = ssl.get_server_certificate(("127.0.0.1", 443))
+            if pem_text:
+                cert_pem = self._extract_first_certificate_pem(pem_text)
+                if cert_pem:
+                    with open(self._public_cert_pem_file, "w", encoding="utf-8") as f:
+                        f.write(cert_pem)
+                    with open(self._public_cert_der_file, "wb") as f:
+                        f.write(ssl.PEM_cert_to_DER_cert(cert_pem))
+        except Exception:
+            pass
+
         import octoprint.server
         @octoprint.server.app.after_request
         def inject_passkeys_login(response):
@@ -267,7 +293,7 @@ class PasskeysPlugin(
         rp_id = (self._settings.get(["rp_id"]) or "").strip() or self._rp_id(payload)
         origin = (self._settings.get(["origin_override"]) or "").strip() or self._expected_origin(payload)
         return {
-            "developer_credit": "Robert Cole",
+            "developer_credit": "Daedalas1981",
             "login_button_label": login_button_label,
             "expected_origin": origin,
             "rp_id": rp_id,
@@ -277,7 +303,6 @@ class PasskeysPlugin(
             "cert_download_url": self._plugin_url("/download_cert") if os.path.exists(self._public_cert_der_file) else "",
             "detected_certificate_source_path": detected_cert_path,
             "certificate_candidates": self._detect_certificate_candidates(),
-            "standalone_login_url": self._plugin_url("/login"),
         }
 
     def _user_status_payload(self, userid: str, payload=None):
@@ -563,10 +588,16 @@ class PasskeysPlugin(
         if resident_pref not in {"preferred", "required", "discouraged"}:
             resident_pref = "preferred"
         self._settings.set(["rp_id"], (data.get("rp_id") or "").strip())
-        self._settings.set(["origin_override"], (data.get("origin_override") or "").strip())
+        
+        origin = (data.get("origin_override") or "").strip()
+        force_https = bool(data.get("force_https", True))
+        if force_https and origin.startswith("http://") and not origin.startswith("http://localhost"):
+            origin = origin.replace("http://", "https://")
+            
+        self._settings.set(["origin_override"], origin)
         self._settings.set(["certificate_source_path"], (data.get("certificate_source_path") or "").strip())
         self._settings.set(["resident_key_preference"], resident_pref)
-        self._settings.set_boolean(["force_https"], bool(data.get("force_https", True)))
+        self._settings.set_boolean(["force_https"], force_https)
         self._settings.set(["login_button_label"], (data.get("login_button_label") or "Sign in with a Passkey").strip()[:120])
         self._settings.save()
         return jsonify(self._admin_status_payload(data))
@@ -673,44 +704,7 @@ class PasskeysPlugin(
         )
 
 
-    @octoprint.plugin.BlueprintPlugin.route("/login", methods=["GET"])
-    def login_page(self):
-        standalone_js = self._plugin_url("/static/js/passkeys.js")
-        standalone_css = self._plugin_url("/static/css/passkeys.css")
-        target_login = (request.script_root or "") + "/login"
-        page = f"""<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>OctoPrint Passkeys Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{standalone_css}">
-  <style>
-    body {{ font-family: Arial, sans-serif; background:#f5f5f5; margin:0; padding:40px 20px; }}
-    .passkeys-login-wrap {{ max-width:420px; margin:0 auto; background:#fff; border:1px solid #ddd; border-radius:8px; padding:24px; }}
-    .passkeys-login-wrap h2 {{ margin-top:0; }}
-    .passkeys-login-wrap input[type=text] {{ width:100%; box-sizing:border-box; margin-bottom:12px; padding:10px; }}
-    .passkeys-login-wrap label {{ display:block; margin-bottom:12px; }}
-    .passkeys-login-wrap .btn {{ display:inline-block; padding:10px 14px; background:#0b73d9; color:#fff; border:none; border-radius:4px; cursor:pointer; }}
-    .passkeys-login-wrap .passkeys-login-message {{ margin-top:12px; color:#a94442; }}
-    .passkeys-login-wrap .hint {{ color:#555; font-size:13px; line-height:1.4; }}
-    .passkeys-login-wrap .alt-link {{ margin-top:16px; font-size:13px; }}
-  </style>
-</head>
-<body>
-  <div id="passkeys-standalone-login" class="passkeys-login-wrap">
-    <h2>Sign in with a Passkey</h2>
-    <p class="hint">Use an enrolled OctoPrint passkey to sign in. If your passkey is discoverable, you can leave Username blank. Otherwise, enter your OctoPrint username first.</p>
-    <input type="text" class="passkeys-standalone-username" placeholder="Username">
-    <label><input type="checkbox" class="passkeys-standalone-remember"> Remember me</label>
-    <button type="button" class="btn passkeys-standalone-login-button">Sign in with a Passkey</button>
-    <div class="passkeys-login-message"></div>
-    <div class="alt-link">Normal OctoPrint login: <a href="{target_login}">{target_login}</a></div>
-  </div>
-  <script src="{standalone_js}"></script>
-</body>
-</html>"""
-        return make_response(page)
+
     @octoprint.plugin.BlueprintPlugin.route("/begin_enroll", methods=["POST"])
     def begin_enroll(self):
         self._require_authenticated_user()

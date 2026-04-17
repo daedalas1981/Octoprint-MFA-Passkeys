@@ -3,4 +3,4 @@ include README.md
 include LICENSE.txt
 recursive-include octoprint_mfa_passkeys/templates *.jinja2
 recursive-include octoprint_mfa_passkeys/static *.js *.css
-recursive-include extras *.sh
+recursive-include octoprint_mfa_passkeys/scripts *.sh

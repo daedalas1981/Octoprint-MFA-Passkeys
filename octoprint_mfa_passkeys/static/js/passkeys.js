@@ -350,27 +350,6 @@
   }
 
 
-  function initStandalonePasskeyPage() {
-    const root = qs("#passkeys-standalone-login");
-    if (!root) return;
-    const usernameField = qs(".passkeys-standalone-username", root);
-    const rememberField = qs(".passkeys-standalone-remember", root);
-    const messageEl = qs(".passkeys-login-message", root);
-    const button = qs(".passkeys-standalone-login-button", root);
-    if (!button) return;
-    button.addEventListener("click", async function () {
-      text(messageEl, "");
-      button.disabled = true;
-      try {
-        await signInWithPasskey(usernameField, rememberField, messageEl);
-      } catch (err) {
-        text(messageEl, err.message || String(err));
-      } finally {
-        button.disabled = false;
-      }
-    });
-  }
-
   async function signInWithPasskey(usernameField, rememberField, messageEl) {
     if (!window.PublicKeyCredential || !navigator.credentials || !navigator.credentials.get) {
       throw new Error("This browser does not support WebAuthn passkeys.");
@@ -421,8 +400,7 @@
   window.OctoPrintMfaPasskeys.ensurePasskeyLoginButton = ensurePasskeyLoginButton;
 
   ready(function () {
-    injectLoginButton();
-    initStandalonePasskeyPage();
+
 
     const userRoot = qs("#passkeys-usersettings");
     if (userRoot) {

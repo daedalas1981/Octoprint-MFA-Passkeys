@@ -1,7 +1,7 @@
 <div id="passkeys-settings">
   <h3>Passkeys for OctoPrint</h3>
   <p class="passkeys-settings-help">
-    <strong>Developer: Robert Cole</strong><br>
+    <strong>Developer: Daedalas1981</strong><br>
     This page helps you set up certificate trust, export a public certificate for Windows or Linux, and enable passwordless sign-in from the OctoPrint login page.
   </p>
 
@@ -46,9 +46,6 @@
 
   <div class="passkeys-settings-message"></div>
 
-  <hr>
-
-  <p class="passkeys-settings-help">Standalone passkey sign-in page: <a class="passkeys-settings-standalone-login-link" href="/plugin/mfa_passkeys/login">/plugin/mfa_passkeys/login</a></p>
 
 <h4>Recommended setup order</h4>
   <ol>
@@ -58,22 +55,20 @@
     <li>Click <strong>Import public certificate from source path</strong>.</li>
     <li>Download the exported <strong>.cer</strong> and install it into Windows trust if Chrome or Edge reports TLS or certificate errors.</li>
     <li>Fully restart the browser after installing the certificate.</li>
-    <li>Enroll one passkey in User Settings, then open the plugin's standalone sign-in page at <code>/plugin/mfa_passkeys/login</code> and use <strong>Sign in with a Passkey</strong>.</li>
+    <li>Enroll one passkey in User Settings, then use the <strong>Sign in with a Passkey</strong> button on the normal OctoPrint login page.</li>
   </ol>
 
   <h4>Where to find the helper script</h4>
   <p class="passkeys-settings-help">
-    The helper script is inside the plugin zip at:<br>
-    <code>octoprint-passkeys-plugin/extras/setup_cert_helper.sh</code>
+    The helper script should be automatically created when OctoPrint boots up in your data directory:<br>
+    <code>~/.octoprint/data/mfa_passkeys/setup_cert_helper.sh</code>
   </p>
 
   <h4>Fresh install: run the helper script over SSH</h4>
   <ol>
-    <li>Download and extract the plugin zip on your PC.</li>
-    <li>Copy <code>setup_cert_helper.sh</code> to your Pi with SCP or SFTP.</li>
     <li>SSH into the Pi.</li>
-    <li>Make it executable with <code>chmod +x ~/setup_cert_helper.sh</code>.</li>
-    <li>Run it with <code>sudo ~/setup_cert_helper.sh</code>. The updated helper can now guide you interactively if you do not pass a PEM path.</li>
+    <li>Run the automatically configured helper script:<br><code>~/.octoprint/data/mfa_passkeys/setup_cert_helper.sh</code></li>
+    <li>The helper script will check for SSL, optionall create a new certificate, and output it safely.</li>
   </ol>
 
   <h4>SSH / console access checklist</h4>
@@ -109,15 +104,15 @@
   <ol>
     <li>Download the exported <code>.cer</code>.</li>
     <li>Press <strong>Win + R</strong>, type <code>mmc</code>, and press Enter.</li>
-    <li>In MMC, go to <strong>File → Add/Remove Snap-in</strong>.</li>
-    <li>Add <strong>Certificates</strong> for <strong>Computer account</strong>, then choose <strong>Local computer</strong>.</li>
-    <li>Open <strong>Trusted Root Certification Authorities → Certificates</strong>.</li>
-    <li>Right-click, choose <strong>All Tasks → Import</strong>, and import the <code>.cer</code>.</li>
-    <li>Close all browser windows and reopen Chrome or Edge.</li>
+    <li>In the top menu, go to <strong>File → Add/Remove Snap-in</strong>.</li>
+    <li>Select <strong>Certificates</strong> and click <strong>Add &gt;</strong>. Choose <strong>Computer account</strong>, then choose <strong>Local computer</strong> and finish.</li>
+    <li>In the left tree, expand <strong>Certificates (Local Computer) → Trusted Root Certification Authorities → Certificates</strong>.</li>
+    <li>Right-click in the empty space on the right (or on the Certificates folder), choose <strong>All Tasks → Import</strong>, and import the <code>.cer</code> file you downloaded.</li>
+    <li>Close all browser windows completely, then reopen Chrome or Edge and navigate to your OctoPrint URL.</li>
   </ol>
 
   <p class="passkeys-settings-help">
-    Quick alternative on Windows: press <strong>Win + R</strong>, run <code>certmgr.msc</code> for the current user store, or use <code>mmc</code> when you specifically need the <strong>Local Computer</strong> store.
+    Alternatively: Press <strong>Win + R</strong>, type <code>certlm.msc</code> to directly open the Local Machine certificate manager.
   </p>
 
   <h4>Linux certificate install</h4>

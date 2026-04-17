@@ -1,2 +1,2 @@
-Copyright (c) 2026 R Cole
+Copyright (c) 2026 Daedalas1981
 AGPLv3 or later.
