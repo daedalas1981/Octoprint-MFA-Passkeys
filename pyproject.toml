@@ -12,7 +12,7 @@ dependencies = [
   "webauthn>=2.7.1",
 ]
 authors = [
-  { name = "Daedalas1981", email = "daedalas1981@users.noreply.github.com" }
+  { name = "Daedalas1981", email = "robert@jar-wedding.com" }
 ]
 urls = { Homepage = "https://github.com/daedalas1981/OctoPrint-Passkeys" }
 dynamic = ["license"]
